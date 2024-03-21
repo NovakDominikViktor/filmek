@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
 
 function MovieListPage() {
     const [movies, setMovies] = useState([]);
@@ -7,10 +8,15 @@ function MovieListPage() {
 
     useEffect(() => {
         setIsFetchPending(true);
-        fetch("https://localhost:7017/Film")
-            .then(res => res.json())
-            .then(movies => setMovies(movies))
-            .finally(() => setIsFetchPending(false));
+        axios.get("https://localhost:7017/Film")
+            .then(response => {
+                setMovies(response.data);
+                setIsFetchPending(false);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setIsFetchPending(false);
+            });
     }, []);
 
     return (

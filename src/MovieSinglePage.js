@@ -1,30 +1,27 @@
 import { useState, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
+import axios from "axios";
 
-function MovieSinglePage(){
+function MovieSinglePage() {
     const param = useParams();
     const id = param.id;
     const [movie, setMovie] = useState({});
     const [isPending, setIsPending] = useState(false);
 
-
     useEffect(() => {
-        setIsPending(true);
-
-        (async () => {
+        const fetchData = async () => {
+            setIsPending(true);
             try {
-                const res = await fetch(`https://localhost:7017/Film/${id}`);
-                const movieData = await res.json();
-                setMovie(movieData);
+                const response = await axios.get(`https://localhost:7017/Film/${id}`);
+                setMovie(response.data);
             } catch (error) {
                 console.log(error);
             } finally {
                 setIsPending(false);
             }
-        })();
+        };
+        fetchData();
     }, [id]);
-
-    console.log("Current movie state:", movie); // Új console.log hozzáadva
 
     return (
         <div className='p-5 m-auto text-center content bg-lavender'>

@@ -1,33 +1,28 @@
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export function MovieCreatePage() {
     const navigate = useNavigate();
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post("https://localhost:7017/Film", {
+                nev: e.target.elements.nev.value,
+                kiadasEve: e.target.elements.kiadaseve.value,
+                ertekeles: e.target.elements.ertekeles.value,
+                kepneve: e.target.elements.kepneve.value,
+            });
+            navigate("/");
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     return (
         <div className='p-5 content bg-whitesmoke text-center'>
             <h2>Új film</h2>
-            <form
-                onSubmit={(e) => {
-                    e.persist();
-                    e.preventDefault();
-                    fetch("https://localhost:7017/Film", {
-                      method: "POST",
-                      headers: {
-                          "Content-Type": "application/json", 
-                      },
-                      body: JSON.stringify({
-                          nev: e.target.elements.nev.value,
-                          kiadasEve: e.target.elements.kiadaseve.value,
-                          ertekeles: e.target.elements.ertekeles.value,
-                          kepneve: e.target.elements.kepneve.value,
-                      }),
-                  })
-                        .then(() => {
-                            navigate("/");
-                        })
-                        .catch(console.log);
-                }}
-            >
+            <form onSubmit={handleSubmit}>
                 <div className='form-group row pb-3'>
                     <label htmlFor="nev" className='col-sm-3 col-form-label'> Név: </label>
                     <div>

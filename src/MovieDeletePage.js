@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function MovieDeletePage() {
     const navigate = useNavigate();
@@ -10,18 +11,17 @@ function MovieDeletePage() {
 
     useEffect(() => {
         setPending(true);
-        (async () => {
-            try {
-                const res = await fetch(`https://localhost:7017/Film/${id}`);
-                const movieData = await res.json();
-                console.log("Movie data:", movieData); // Új console.log hozzáadva
-                setMovie(movieData);
-            } catch (error) {
+        axios.get(`https://localhost:7017/Film/${id}`)
+            .then(response => {
+                console.log("Movie data:", response.data);
+                setMovie(response.data);
+            })
+            .catch(error => {
                 console.log(error);
-            } finally {
+            })
+            .finally(() => {
                 setPending(false);
-            }
-        })();
+            });
     }, [id]);
 
     return (
@@ -44,9 +44,7 @@ function MovieDeletePage() {
                         <form onSubmit={async (e) => {
                             try {
                                 e.preventDefault();
-                                await fetch(`https://localhost:7017/Film/${id}`, {
-                                    method: "DELETE",
-                                });
+                                await axios.delete(`https://localhost:7017/Film/${id}`);
                                 navigate("/");
                             } catch (error) {
                                 console.log(error);
